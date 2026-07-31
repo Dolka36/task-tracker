@@ -1,24 +1,36 @@
 package com.dolka36.tasktracker.service;
 
 import com.dolka36.tasktracker.dao.TaskDao;
+import com.dolka36.tasktracker.dao.UserDao;
 import com.dolka36.tasktracker.model.Task;
+import com.dolka36.tasktracker.model.TaskStatus;
 
 import java.util.List;
 import java.util.Optional;
 
 public class TaskService {
     private final TaskDao taskDao;
+    private final UserDao userDao; // <-- Добавляем UserDao
 
-    public TaskService(TaskDao taskDao) {
+    public TaskService(TaskDao taskDao, UserDao userDao) {
         this.taskDao = taskDao;
+        this.userDao = userDao;
     }
 
     public Task createTask(String title, String description, Long userId) {
         if (title == null || title.trim().isEmpty()) {
             throw new IllegalArgumentException("Название задачи не может быть пустым");
         }
-        Task task = new Task(title, description, "NEW");
-        task.setUserId(userId); // привязываем userId (может быть и null)
+
+        // Проверяем, существует ли пользователь в БД
+        if (userId != null) {
+            if (userDao.findById(userId).isEmpty()) {
+                throw new IllegalArgumentException("Пользователь с ID " + userId + " не существует!");
+            }
+        }
+
+        Task task = new Task(title, description, TaskStatus.NEW);
+        task.setUserId(userId);
 
         return taskDao.save(task);
     }
@@ -31,7 +43,7 @@ public class TaskService {
         return taskDao.findAll();
     }
 
-    public boolean updateStatus(Long id, String newStatus) {
+    public boolean updateStatus(Long id, TaskStatus newStatus) {
         Optional<Task> taskOptional = taskDao.findById(id);
 
         if (taskOptional.isPresent()) {

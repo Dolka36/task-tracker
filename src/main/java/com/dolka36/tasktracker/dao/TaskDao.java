@@ -1,6 +1,7 @@
 package com.dolka36.tasktracker.dao;
 
 import com.dolka36.tasktracker.model.Task;
+import com.dolka36.tasktracker.model.TaskStatus;
 import com.dolka36.tasktracker.util.ConnectionManager;
 
 import java.sql.Connection;
@@ -61,7 +62,7 @@ public class TaskDao {
             // 2. Заполняем параметры '?' по порядку (нумерация с 1)
             preparedStatement.setString(1, task.getTitle());
             preparedStatement.setString(2, task.getDescription());
-            preparedStatement.setString(3, task.getStatus());
+            preparedStatement.setString(3, task.getStatus().name());
 
             // 3. Обработка null для user_id
             if (task.getUserId() != null) {
@@ -105,7 +106,7 @@ public class TaskDao {
                         resultSet.getLong("id"),
                         resultSet.getString("title"),
                         resultSet.getString("description"),
-                        resultSet.getString("status"),
+                        TaskStatus.valueOf(resultSet.getString("status")),
                         resultSet.getObject("user_id", Long.class) // безопасно читает Long, возвращая null если в БД NULL
                 );
                 return Optional.of(task); // Оборачиваем найденную задачу в Optional
@@ -136,7 +137,7 @@ public class TaskDao {
                         resultSet.getLong("id"),
                         resultSet.getString("title"),
                         resultSet.getString("description"),
-                        resultSet.getString("status"),
+                        TaskStatus.valueOf(resultSet.getString("status")),
                         resultSet.getObject("user_id", Long.class)
                 );
                 // Добавляем созданный объект в наш список
@@ -157,7 +158,7 @@ public class TaskDao {
             // 1. Заполняем новые значения полей
             preparedStatement.setString(1, task.getTitle());
             preparedStatement.setString(2, task.getDescription());
-            preparedStatement.setString(3, task.getStatus());
+            preparedStatement.setString(3, task.getStatus().name());;
 
             if (task.getUserId() != null) {
                 preparedStatement.setLong(4, task.getUserId());

@@ -7,21 +7,21 @@ public class Task {
     private Long id;
     private String title;
     private String description;
-    private String status;
+    private TaskStatus status; // <-- Меняем тип с String на TaskStatus
     private Long userId;
 
     public Task() {
     }
 
-    public Task(Long id, String title, String description, String status, Long userId) {
+    public Task(Long id, String title, String description, TaskStatus status, Long userId) {
         this.id = id;
-        this.description = description;
         this.title = title;
+        this.description = description;
         this.status = status;
         this.userId = userId;
     }
 
-    public Task(String title, String description, String status) {
+    public Task(String title, String description, TaskStatus status) {
         this.title = title;
         this.description = description;
         this.status = status;
@@ -35,14 +35,6 @@ public class Task {
         this.id = id;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -51,11 +43,19 @@ public class Task {
         this.title = title;
     }
 
-    public String getStatus() {
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public TaskStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(TaskStatus status) {
         this.status = status;
     }
 
@@ -72,7 +72,7 @@ public class Task {
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
         return Objects.equals(id, task.id) && Objects.equals(title, task.title) &&
-                Objects.equals(description, task.description) && Objects.equals(status, task.status) &&
+                Objects.equals(description, task.description) && status == task.status &&
                 Objects.equals(userId, task.userId);
     }
 
@@ -87,7 +87,7 @@ public class Task {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
-                ", status='" + status + '\'' +
+                ", status=" + status +
                 ", userId=" + userId +
                 '}';
     }
